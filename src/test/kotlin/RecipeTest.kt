@@ -42,7 +42,7 @@ object RecipeTest : Spek({
             val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
             val sut = Recipe(inputs, outputs, 30, 30f)
 
-            val streams = sut.inputStream()
+            val streams = sut.inputStream
 
             expect(streams.size).toBe(2)
             expect(streams[Na]).notToBeNull().toBeWithErrorTolerance(0.033f, 0.001f)
@@ -54,7 +54,7 @@ object RecipeTest : Spek({
             val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
             val sut = Recipe(inputs, outputs, 30, 30f)
 
-            val streams = sut.outputStream()
+            val streams = sut.outputStream
 
             expect(streams.size).toBe(2)
             expect(streams[NaOH]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
