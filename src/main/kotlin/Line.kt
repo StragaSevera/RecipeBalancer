@@ -3,7 +3,7 @@ package ru.ought.greg_recipe_balancer
 import java.lang.Float.min
 
 class Line(val recipe: Recipe, var size: Int = 1) {
-    private val boundedInputs = mutableMapOf<Ingredient, Float>()
+    private val boundedInputs = mutableMapOf<Ingredient, Line>()
 
     val inputStream = recipe.inputStream.parallelizeByMechs()
     val outputStream = recipe.outputStream.parallelizeByMechs()
@@ -12,8 +12,8 @@ class Line(val recipe: Recipe, var size: Int = 1) {
 
     fun boundInputBy(ingredient: Ingredient, line: Line) {
         require(inputStream.containsKey(ingredient))
-        val ingredientFlow = checkNotNull(line.outputStream[ingredient])
-        boundedInputs[ingredient] = ingredientFlow
+        require(line.outputStream.containsKey(ingredient))
+        boundedInputs[ingredient] = line
     }
 
     fun boundedInputStream(): IngredientStream {
@@ -27,8 +27,8 @@ class Line(val recipe: Recipe, var size: Int = 1) {
     }
 
     private fun inputBoundRatio(): Float {
-        return min(boundedInputs.map {
-            it.value / inputStream.getValue(it.key).toFloat()
+        return min(boundedInputs.map { (ingr, line) ->
+            line.boundedOutputStream().getValue(ingr) / inputStream.getValue(ingr).toFloat()
         }.min() ?: 1f, 1f)
     }
 }
