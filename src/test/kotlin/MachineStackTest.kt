@@ -5,7 +5,7 @@ import ch.tutteli.atrium.api.verbs.expect
 import org.spekframework.spek2.Spek
 
 @Suppress("LocalVariableName")
-object LineTest : Spek({
+object MachineStackTest : Spek({
     group("basic tests") {
         val Na by memoized { Ingredient("Na") }
         val H2O by memoized { Ingredient("H2O") }
@@ -21,7 +21,7 @@ object LineTest : Spek({
         }
 
         test("has basic properties") {
-            val sut = Line(recipe)
+            val sut = MachineStack(recipe)
 
             expect(sut.recipe).toBe(recipe)
             expect(sut.size).toBe(1)
@@ -29,7 +29,7 @@ object LineTest : Spek({
         }
 
         test("has correct streams with size of 1") {
-            val sut = Line(recipe)
+            val sut = MachineStack(recipe)
 
             val inputStream = sut.inputStream
             val outputStream = sut.outputStream
@@ -44,7 +44,7 @@ object LineTest : Spek({
         }
 
         test("has correct streams with size of 2") {
-            val sut = Line(recipe, 3)
+            val sut = MachineStack(recipe, 3)
 
             val inputStream = sut.inputStream
             expect(inputStream.size).toBe(2)
@@ -58,7 +58,7 @@ object LineTest : Spek({
         }
 
         test("can be bounded by ratio") {
-            val sut = Line(recipe, 3, 0.666f)
+            val sut = MachineStack(recipe, 3, 0.666f)
 
             val inputStream = sut.inputStream
             expect(inputStream.size).toBe(2)
