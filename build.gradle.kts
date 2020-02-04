@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.3.61"
 }
 
-group = "org.example"
+group = "ru.ought.recipe_balancer"
 version = "1.0-SNAPSHOT"
 
 repositories {

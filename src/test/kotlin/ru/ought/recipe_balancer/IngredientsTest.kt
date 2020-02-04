@@ -1,8 +1,10 @@
-package ru.ought.greg_recipe_balancer
+package ru.ought.recipe_balancer
 
 import org.spekframework.spek2.Spek
 import ch.tutteli.atrium.api.fluent.en_GB.*
 import ch.tutteli.atrium.api.verbs.expect
+import ru.ought.recipe_balancer.Ingredient
+import ru.ought.recipe_balancer.Stack
 
 
 object IngredientsTest : Spek({

@@ -1,10 +1,13 @@
-package ru.ought.greg_recipe_balancer
+package ru.ought.recipe_balancer
 
 import ch.tutteli.atrium.api.fluent.en_GB.notToBeNull
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import org.spekframework.spek2.Spek
 import ch.tutteli.atrium.api.verbs.expect
+import ru.ought.recipe_balancer.Ingredient
+import ru.ought.recipe_balancer.Recipe
+import ru.ought.recipe_balancer.Stack
 
 
 @Suppress("LocalVariableName")
@@ -16,10 +19,17 @@ object RecipeTest : Spek({
         val H2 by memoized { Ingredient("H2") }
 
         test("has input and output") {
-            val inputs = listOf(Stack(Na, 1), Stack(H2O, 3000))
-            val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
+            val inputs = listOf(
+                Stack(Na, 1),
+                Stack(H2O, 3000)
+            )
+            val outputs = listOf(
+                Stack(NaOH, 3),
+                Stack(H2, 1000)
+            )
 
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut =
+                Recipe(inputs, outputs, 30, 30f)
 
             expect(sut.inputs).toBe(inputs)
             expect(sut.outputs).toBe(outputs)
@@ -28,19 +38,33 @@ object RecipeTest : Spek({
         }
 
         test("calculates energy per recipe run") {
-            val inputs = listOf(Stack(Na, 1), Stack(H2O, 3000))
-            val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
+            val inputs = listOf(
+                Stack(Na, 1),
+                Stack(H2O, 3000)
+            )
+            val outputs = listOf(
+                Stack(NaOH, 3),
+                Stack(H2, 1000)
+            )
 
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut =
+                Recipe(inputs, outputs, 30, 30f)
 
             expect(sut.durationInTicks).toBe(600)
             expect(sut.energyPerRecipe).toBe(18000)
         }
 
         test("calculates input stream") {
-            val inputs = listOf(Stack(Na, 1), Stack(H2O, 3000))
-            val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val inputs = listOf(
+                Stack(Na, 1),
+                Stack(H2O, 3000)
+            )
+            val outputs = listOf(
+                Stack(NaOH, 3),
+                Stack(H2, 1000)
+            )
+            val sut =
+                Recipe(inputs, outputs, 30, 30f)
 
             val streams = sut.inputStream
 
@@ -50,9 +74,16 @@ object RecipeTest : Spek({
         }
 
         test("calculates output stream") {
-            val inputs = listOf(Stack(Na, 1), Stack(H2O, 3000))
-            val outputs = listOf(Stack(NaOH, 3), Stack(H2, 1000))
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val inputs = listOf(
+                Stack(Na, 1),
+                Stack(H2O, 3000)
+            )
+            val outputs = listOf(
+                Stack(NaOH, 3),
+                Stack(H2, 1000)
+            )
+            val sut =
+                Recipe(inputs, outputs, 30, 30f)
 
             val streams = sut.outputStream
 

@@ -1,2 +1,2 @@
-rootProject.name = "GregRecipeBalancer"
+rootProject.name = "RecipeBalancer"
 

@@ -1,4 +1,4 @@
-package ru.ought.greg_recipe_balancer
+package ru.ought.recipe_balancer
 
 import kotlin.math.roundToInt
 

@@ -1,8 +1,10 @@
-package ru.ought.greg_recipe_balancer
+package ru.ought.recipe_balancer
 
 import org.spekframework.spek2.Spek
-import ch.tutteli.atrium.api.fluent.en_GB.*
-import ch.tutteli.atrium.api.verbs.expect
+import ru.ought.recipe_balancer.Ingredient
+import ru.ought.recipe_balancer.MachineGraph
+import ru.ought.recipe_balancer.Recipe
+import ru.ought.recipe_balancer.Stack
 
 
 @Suppress("LocalVariableName")
@@ -15,8 +17,14 @@ object MachineGraphTest : Spek({
 
         val recipe by memoized {
             Recipe(
-                listOf(Stack(Na, 1), Stack(H2O, 3000)),
-                listOf(Stack(NaOH, 3), Stack(H2, 1000)),
+                listOf(
+                    Stack(Na, 1),
+                    Stack(H2O, 3000)
+                ),
+                listOf(
+                    Stack(NaOH, 3),
+                    Stack(H2, 1000)
+                ),
                 30, 29f
             )
         }
