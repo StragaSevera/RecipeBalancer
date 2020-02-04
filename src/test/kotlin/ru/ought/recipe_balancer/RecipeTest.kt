@@ -5,9 +5,6 @@ import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import org.spekframework.spek2.Spek
 import ch.tutteli.atrium.api.verbs.expect
-import ru.ought.recipe_balancer.Ingredient
-import ru.ought.recipe_balancer.Recipe
-import ru.ought.recipe_balancer.Stack
 
 
 @Suppress("LocalVariableName")
@@ -28,13 +25,28 @@ object RecipeTest : Spek({
                 Stack(H2, 1000)
             )
 
-            val sut =
-                Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 30, 30f, "Chemical Reactor")
 
             expect(sut.inputs).toBe(inputs)
             expect(sut.outputs).toBe(outputs)
             expect(sut.duration).toBe(30)
             expect(sut.energyPerTick).toBeWithErrorTolerance(30f, 0.01f)
+            expect(sut.machineName).toBe("Chemical Reactor")
+        }
+
+        test("can get default machine name") {
+            val inputs = listOf(
+                Stack(Na, 1),
+                Stack(H2O, 3000)
+            )
+            val outputs = listOf(
+                Stack(NaOH, 3),
+                Stack(H2, 1000)
+            )
+
+            val sut = Recipe(inputs, outputs, 30, 30f)
+
+            expect(sut.machineName).toBe("Common Machine")
         }
 
         test("calculates energy per recipe run") {
@@ -47,8 +59,7 @@ object RecipeTest : Spek({
                 Stack(H2, 1000)
             )
 
-            val sut =
-                Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 30, 30f)
 
             expect(sut.durationInTicks).toBe(600)
             expect(sut.energyPerRecipe).toBe(18000)
@@ -63,14 +74,13 @@ object RecipeTest : Spek({
                 Stack(NaOH, 3),
                 Stack(H2, 1000)
             )
-            val sut =
-                Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 30, 30f)
 
-            val streams = sut.inputStream
+            val stream = sut.inputStream
 
-            expect(streams.size).toBe(2)
-            expect(streams[Na]).notToBeNull().toBeWithErrorTolerance(0.033f, 0.001f)
-            expect(streams[H2O]).notToBeNull().toBeWithErrorTolerance(100f, 0.01f)
+            expect(stream.size).toBe(2)
+            expect(stream[Na]).notToBeNull().toBeWithErrorTolerance(0.033f, 0.001f)
+            expect(stream[H2O]).notToBeNull().toBeWithErrorTolerance(100f, 0.01f)
         }
 
         test("calculates output stream") {
@@ -82,14 +92,13 @@ object RecipeTest : Spek({
                 Stack(NaOH, 3),
                 Stack(H2, 1000)
             )
-            val sut =
-                Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 30, 30f)
 
-            val streams = sut.outputStream
+            val stream = sut.outputStream
 
-            expect(streams.size).toBe(2)
-            expect(streams[NaOH]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
-            expect(streams[H2]).notToBeNull().toBeWithErrorTolerance(33.33f, 0.01f)
+            expect(stream.size).toBe(2)
+            expect(stream[NaOH]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
+            expect(stream[H2]).notToBeNull().toBeWithErrorTolerance(33.33f, 0.01f)
         }
     }
 })

@@ -5,7 +5,7 @@ import kotlin.math.roundToInt
 typealias IngredientStream = Map<Ingredient, Float>
 typealias MutableIngredientStream = MutableMap<Ingredient, Float>
 
-data class Recipe(val inputs: List<Stack>, val outputs: List<Stack>, val duration: Int, val energyPerTick: Float) {
+data class Recipe(val inputs: List<Stack>, val outputs: List<Stack>, val duration: Int, val energyPerTick: Float, val machineName: String = "Common Machine") {
     val durationInTicks = duration * 20
 
     val energyPerRecipe = (durationInTicks * energyPerTick).roundToInt()
