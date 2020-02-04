@@ -5,100 +5,99 @@ import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import org.spekframework.spek2.Spek
 import ch.tutteli.atrium.api.verbs.expect
+import javax.swing.text.html.HTML.Tag.H2
 
-
-@Suppress("LocalVariableName")
 object RecipeTest : Spek({
     group("basic tests") {
-        val Na by memoized { Ingredient("Na") }
-        val H2O by memoized { Ingredient("H2O") }
-        val NaOH by memoized { Ingredient("NaOH") }
-        val H2 by memoized { Ingredient("H2") }
+        val a by memoized { Ingredient("A") }
+        val b by memoized { Ingredient("B") }
+        val c by memoized { Ingredient("C") }
+        val d by memoized { Ingredient("D") }
 
         test("has input and output") {
             val inputs = listOf(
-                Stack(Na, 1),
-                Stack(H2O, 3000)
+                Stack(a, 1),
+                Stack(b, 3000)
             )
             val outputs = listOf(
-                Stack(NaOH, 3),
-                Stack(H2, 1000)
+                Stack(c, 3),
+                Stack(d, 1000)
             )
 
-            val sut = Recipe(inputs, outputs, 30, 30f, "Chemical Reactor")
+            val sut = Recipe(inputs, outputs, 32f, 2.5f, "Chemical Reactor")
 
             expect(sut.inputs).toBe(inputs)
             expect(sut.outputs).toBe(outputs)
-            expect(sut.duration).toBe(30)
-            expect(sut.energyPerTick).toBeWithErrorTolerance(30f, 0.01f)
+            expect(sut.duration).toBe(2.5f)
+            expect(sut.energyPerTick).toBeWithErrorTolerance(32f, 0.01f)
             expect(sut.machineName).toBe("Chemical Reactor")
         }
 
         test("can get default machine name") {
             val inputs = listOf(
-                Stack(Na, 1),
-                Stack(H2O, 3000)
+                Stack(a, 1),
+                Stack(b, 3000)
             )
             val outputs = listOf(
-                Stack(NaOH, 3),
-                Stack(H2, 1000)
+                Stack(c, 3),
+                Stack(d, 1000)
             )
 
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 32f, 2.5f)
 
             expect(sut.machineName).toBe("Common Machine")
         }
 
         test("calculates energy per recipe run") {
             val inputs = listOf(
-                Stack(Na, 1),
-                Stack(H2O, 3000)
+                Stack(a, 1),
+                Stack(b, 3000)
             )
             val outputs = listOf(
-                Stack(NaOH, 3),
-                Stack(H2, 1000)
+                Stack(c, 3),
+                Stack(d, 1000)
             )
 
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 32f, 2.5f)
 
-            expect(sut.durationInTicks).toBe(600)
-            expect(sut.energyPerRecipe).toBe(18000)
+            expect(sut.durationInTicks).toBe(50)
+            expect(sut.energyPerRecipe).toBe(1600)
         }
 
         test("calculates input stream") {
             val inputs = listOf(
-                Stack(Na, 1),
-                Stack(H2O, 3000)
+                Stack(a, 1),
+                Stack(b, 3000)
             )
             val outputs = listOf(
-                Stack(NaOH, 3),
-                Stack(H2, 1000)
+                Stack(c, 3),
+                Stack(d, 1000)
             )
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 32f, 2.5f)
 
             val stream = sut.inputStream
 
             expect(stream.size).toBe(2)
-            expect(stream[Na]).notToBeNull().toBeWithErrorTolerance(0.033f, 0.001f)
-            expect(stream[H2O]).notToBeNull().toBeWithErrorTolerance(100f, 0.01f)
+            expect(stream[a]).notToBeNull().toBeWithErrorTolerance(0.4f, 0.01f)
+            expect(stream[b]).notToBeNull().toBeWithErrorTolerance(1200f, 1f)
         }
 
         test("calculates output stream") {
             val inputs = listOf(
-                Stack(Na, 1),
-                Stack(H2O, 3000)
+                Stack(a, 1),
+                Stack(b, 3000)
             )
             val outputs = listOf(
-                Stack(NaOH, 3),
-                Stack(H2, 1000)
+                Stack(c, 3),
+                Stack(d, 1000)
             )
-            val sut = Recipe(inputs, outputs, 30, 30f)
+            val sut = Recipe(inputs, outputs, 32f, 2.5f)
 
             val stream = sut.outputStream
 
             expect(stream.size).toBe(2)
-            expect(stream[NaOH]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
-            expect(stream[H2]).notToBeNull().toBeWithErrorTolerance(33.33f, 0.01f)
+            expect(stream[c]).notToBeNull().toBeWithErrorTolerance(1.2f, 0.01f)
+            expect(stream[d]).notToBeNull().toBeWithErrorTolerance(400f, 1f)
         }
     }
 })

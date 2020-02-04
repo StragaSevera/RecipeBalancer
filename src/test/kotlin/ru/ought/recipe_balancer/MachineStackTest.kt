@@ -3,30 +3,21 @@ package ru.ought.recipe_balancer
 import ch.tutteli.atrium.api.fluent.en_GB.*
 import ch.tutteli.atrium.api.verbs.expect
 import org.spekframework.spek2.Spek
-import ru.ought.recipe_balancer.Ingredient
-import ru.ought.recipe_balancer.MachineStack
-import ru.ought.recipe_balancer.Recipe
-import ru.ought.recipe_balancer.Stack
+import javax.swing.text.html.HTML.Tag.H2
 
 @Suppress("LocalVariableName")
 object MachineStackTest : Spek({
     group("basic tests") {
-        val Na by memoized { Ingredient("Na") }
-        val H2O by memoized { Ingredient("H2O") }
-        val NaOH by memoized { Ingredient("NaOH") }
-        val H2 by memoized { Ingredient("H2") }
+        val a by memoized { Ingredient("A") }
+        val b by memoized { Ingredient("B") }
+        val c by memoized { Ingredient("C") }
+        val d by memoized { Ingredient("D") }
 
         val recipe by memoized {
             Recipe(
-                listOf(
-                    Stack(Na, 1),
-                    Stack(H2O, 3000)
-                ),
-                listOf(
-                    Stack(NaOH, 3),
-                    Stack(H2, 1000)
-                ),
-                30, 29f
+                listOf(Stack(a, 1), Stack(b, 3000)),
+                listOf(Stack(c, 3), Stack(d, 1000)),
+                32f, 2.5f
             )
         }
 
@@ -42,44 +33,42 @@ object MachineStackTest : Spek({
             val sut = MachineStack(recipe)
 
             val inputStream = sut.inputStream
-            val outputStream = sut.outputStream
-
             expect(inputStream.size).toBe(2)
-            expect(inputStream[Na]).notToBeNull().toBeWithErrorTolerance(0.033f, 0.001f)
-            expect(inputStream[H2O]).notToBeNull().toBeWithErrorTolerance(100f, 1f)
+            expect(inputStream[a]).notToBeNull().toBeWithErrorTolerance(0.4f, 0.01f)
+            expect(inputStream[b]).notToBeNull().toBeWithErrorTolerance(1200f, 1f)
 
+            val outputStream = sut.outputStream
             expect(outputStream.size).toBe(2)
-            expect(outputStream[NaOH]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
-            expect(outputStream[H2]).notToBeNull().toBeWithErrorTolerance(33.33f, 1f)
+            expect(outputStream[c]).notToBeNull().toBeWithErrorTolerance(1.2f, 0.01f)
+            expect(outputStream[d]).notToBeNull().toBeWithErrorTolerance(400f, 1f)
         }
 
         test("has correct streams with size of 2") {
-            val sut = MachineStack(recipe, 3)
+            val sut = MachineStack(recipe, 2)
 
             val inputStream = sut.inputStream
             expect(inputStream.size).toBe(2)
-            expect(inputStream[Na]).notToBeNull().toBeWithErrorTolerance(0.1f, 0.001f)
-            expect(inputStream[H2O]).notToBeNull().toBeWithErrorTolerance(300f, 1f)
+            expect(inputStream[a]).notToBeNull().toBeWithErrorTolerance(0.8f, 0.01f)
+            expect(inputStream[b]).notToBeNull().toBeWithErrorTolerance(2400f, 1f)
 
             val outputStream = sut.outputStream
             expect(outputStream.size).toBe(2)
-            expect(outputStream[NaOH]).notToBeNull().toBeWithErrorTolerance(0.3f, 0.001f)
-            expect(outputStream[H2]).notToBeNull().toBeWithErrorTolerance(100f, 1f)
+            expect(outputStream[c]).notToBeNull().toBeWithErrorTolerance(2.4f, 0.01f)
+            expect(outputStream[d]).notToBeNull().toBeWithErrorTolerance(800f, 1f)
         }
 
         test("can be bounded by ratio") {
-            val sut =
-                MachineStack(recipe, 3, 0.666f)
+            val sut = MachineStack(recipe, 3, 0.5f)
 
             val inputStream = sut.inputStream
             expect(inputStream.size).toBe(2)
-            expect(inputStream[Na]).notToBeNull().toBeWithErrorTolerance(0.066f, 0.001f)
-            expect(inputStream[H2O]).notToBeNull().toBeWithErrorTolerance(200f, 1f)
+            expect(inputStream[a]).notToBeNull().toBeWithErrorTolerance(0.6f, 0.01f)
+            expect(inputStream[b]).notToBeNull().toBeWithErrorTolerance(1800f, 1f)
 
             val outputStream = sut.outputStream
             expect(outputStream.size).toBe(2)
-            expect(outputStream[NaOH]).notToBeNull().toBeWithErrorTolerance(0.2f, 0.001f)
-            expect(outputStream[H2]).notToBeNull().toBeWithErrorTolerance(66f, 1f)
+            expect(outputStream[c]).notToBeNull().toBeWithErrorTolerance(1.8f, 0.01f)
+            expect(outputStream[d]).notToBeNull().toBeWithErrorTolerance(600f, 1f)
         }
     }
 })
