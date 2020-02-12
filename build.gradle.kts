@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.3.61"
+    kotlin("plugin.serialization") version "1.3.61"
 }
 
 group = "ru.ought.recipe_balancer"
@@ -24,6 +25,8 @@ val mockkVersion by extra("1.9.3")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    implementation("com.charleskorn.kaml:kaml:0.15.0")
 
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
