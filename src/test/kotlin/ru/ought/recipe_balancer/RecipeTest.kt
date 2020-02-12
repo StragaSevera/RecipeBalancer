@@ -3,18 +3,18 @@ package ru.ought.recipe_balancer
 import ch.tutteli.atrium.api.fluent.en_GB.notToBeNull
 import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
-import org.spekframework.spek2.Spek
 import ch.tutteli.atrium.api.verbs.expect
-import javax.swing.text.html.HTML.Tag.H2
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 
 object RecipeTest : Spek({
-    group("basic tests") {
+    describe("basic tests") {
         val a by memoized { Ingredient("A") }
         val b by memoized { Ingredient("B") }
         val c by memoized { Ingredient("C") }
         val d by memoized { Ingredient("D") }
 
-        test("has input and output") {
+        it("has input and output") {
             val inputs = listOf(
                 Stack(a, 1),
                 Stack(b, 3000)
@@ -33,7 +33,7 @@ object RecipeTest : Spek({
             expect(sut.machineName).toBe("Chemical Reactor")
         }
 
-        test("can get default machine name") {
+        it("can get default machine name") {
             val inputs = listOf(
                 Stack(a, 1),
                 Stack(b, 3000)
@@ -48,7 +48,7 @@ object RecipeTest : Spek({
             expect(sut.machineName).toBe("Common Machine")
         }
 
-        test("calculates energy per recipe run") {
+        it("calculates energy per recipe run") {
             val inputs = listOf(
                 Stack(a, 1),
                 Stack(b, 3000)
@@ -64,7 +64,7 @@ object RecipeTest : Spek({
             expect(sut.energyPerRecipe).toBe(1600)
         }
 
-        test("calculates input stream") {
+        it("calculates input stream") {
             val inputs = listOf(
                 Stack(a, 1),
                 Stack(b, 3000)
@@ -82,7 +82,7 @@ object RecipeTest : Spek({
             expect(stream[b]).notToBeNull().toBeWithErrorTolerance(1200f, 1f)
         }
 
-        test("calculates output stream") {
+        it("calculates output stream") {
             val inputs = listOf(
                 Stack(a, 1),
                 Stack(b, 3000)

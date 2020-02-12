@@ -1,13 +1,14 @@
 package ru.ought.recipe_balancer
 
-import org.spekframework.spek2.Spek
-import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import ch.tutteli.atrium.api.verbs.expect
-import ch.tutteli.atrium.domain.builders.creating.FloatingPointAssertionsBuilder.toBeWithErrorTolerance
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 
 
 object MachineLinkTest : Spek({
-    group("basic tests") {
+    describe("basic tests") {
         val a by memoized { Ingredient("A") }
         val b by memoized { Ingredient("B") }
         val c by memoized { Ingredient("C") }
@@ -31,7 +32,7 @@ object MachineLinkTest : Spek({
             )
         }
 
-        test("can bound forward simple chain") {
+        it("can bound forward simple chain") {
             val from = MachineStack(recipeABC, 1)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)
@@ -43,7 +44,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
-        test("can bound forward simple chain when already bounded") {
+        it("can bound forward simple chain when already bounded") {
             val from = MachineStack(recipeABC, 1)
             val to = MachineStack(recipeCDEF, 1, 0.6f)
             val sut = MachineLink(from, to, c)
@@ -55,7 +56,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
-        test("can bound forward simple chain when no bounds") {
+        it("can bound forward simple chain when no bounds") {
             val from = MachineStack(recipeABC, 4)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)
@@ -67,7 +68,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can bound forward simple chain when no bounds and already bounded") {
+        it("can bound forward simple chain when no bounds and already bounded") {
             val from = MachineStack(recipeABC, 4)
             val to = MachineStack(recipeCDEF, 1, 0.6f)
             val sut = MachineLink(from, to, c)
@@ -79,7 +80,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(0.6f, 0.01f)
         }
 
-        test("can bound backward simple chain") {
+        it("can bound backward simple chain") {
             val from = MachineStack(recipeABC, 4)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)
@@ -91,7 +92,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can bound backward simple chain when already bounded") {
+        it("can bound backward simple chain when already bounded") {
             val from = MachineStack(recipeABC, 4, 0.6f)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)
@@ -103,7 +104,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can bound backward simple chain when no bounds") {
+        it("can bound backward simple chain when no bounds") {
             val from = MachineStack(recipeABC, 1)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)
@@ -115,7 +116,7 @@ object MachineLinkTest : Spek({
             expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can bound backward simple chain when already bounded and no bounds") {
+        it("can bound backward simple chain when already bounded and no bounds") {
             val from = MachineStack(recipeABC, 1, 0.6f)
             val to = MachineStack(recipeCDEF, 1)
             val sut = MachineLink(from, to, c)

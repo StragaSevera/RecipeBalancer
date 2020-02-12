@@ -4,11 +4,12 @@ import ch.tutteli.atrium.api.fluent.en_GB.toBe
 import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import ch.tutteli.atrium.api.verbs.expect
 import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 
 
 @Suppress("LocalVariableName")
 object MachineGraphTest : Spek({
-    group("basic tests") {
+    describe("basic tests") {
         val a by memoized { Ingredient("A") }
         val b by memoized { Ingredient("B") }
         val c by memoized { Ingredient("C") }
@@ -56,7 +57,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        test("can be linked") {
+        it("can be linked") {
             val machineAB = MachineStack(recipeAB)
             val machineBCD = MachineStack(recipeBCD)
             val sut = MachineGraph()
@@ -79,7 +80,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        test("can balance forward graph with two nodes") {
+        it("can balance forward graph with two nodes") {
             val machineAB = MachineStack(recipeAB)
             val machineBCD = MachineStack(recipeBCD)
             val sut = MachineGraph()
@@ -92,7 +93,7 @@ object MachineGraphTest : Spek({
             expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
-        test("does not change when balancing forward and not needed") {
+        it("does not change when balancing forward and not needed") {
             val machineAB = MachineStack(recipeAB, 3)
             val machineBCD = MachineStack(recipeBCD)
             val sut = MachineGraph()
@@ -105,7 +106,7 @@ object MachineGraphTest : Spek({
             expect(machineBCD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can balance backward graph with two nodes") {
+        it("can balance backward graph with two nodes") {
             val machineBCD = MachineStack(recipeBCD)
             val machineDEF = MachineStack(recipeDEF)
             val sut = MachineGraph()
@@ -118,7 +119,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("does not change when balancing backward and not needed") {
+        it("does not change when balancing backward and not needed") {
             val machineBCD = MachineStack(recipeBCD)
             val machineDEF = MachineStack(recipeDEF, 3)
             val sut = MachineGraph()
@@ -131,7 +132,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can balance forward V-graph with three nodes") {
+        it("can balance forward V-graph with three nodes") {
             val machineBCD = MachineStack(recipeBCD)
             val machineAE = MachineStack(recipeAE)
             val machineDEF = MachineStack(recipeDEF, 2)
@@ -146,7 +147,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
         }
 
-        test("can balance backward ^-graph with three nodes") {
+        it("can balance backward ^-graph with three nodes") {
             val machineBCD = MachineStack(recipeBCD)
             val machineCA = MachineStack(recipeCA)
             val machineDEF = MachineStack(recipeDEF)
@@ -161,7 +162,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can full balance V-graph with three nodes") {
+        it("can full balance V-graph with three nodes") {
             val machineBCD = MachineStack(recipeBCD)
             val machineAE = MachineStack(recipeAE)
             val machineDEF = MachineStack(recipeDEF, 2)
@@ -176,7 +177,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
         }
 
-        test("can full balance ^-graph with three nodes") {
+        it("can full balance ^-graph with three nodes") {
             val machineBCD = MachineStack(recipeBCD)
             val machineCA = MachineStack(recipeCA)
             val machineDEF = MachineStack(recipeDEF)
@@ -191,7 +192,7 @@ object MachineGraphTest : Spek({
             expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
-        test("can full balance complex graph") {
+        it("can full balance complex graph") {
             val machineAB = MachineStack(recipeAB)
             val machineBCD = MachineStack(recipeBCD)
             val machineCA = MachineStack(recipeCA)

@@ -1,13 +1,15 @@
 package ru.ought.recipe_balancer
 
-import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.fluent.en_GB.notToBeNull
+import ch.tutteli.atrium.api.fluent.en_GB.toBe
+import ch.tutteli.atrium.api.fluent.en_GB.toBeWithErrorTolerance
 import ch.tutteli.atrium.api.verbs.expect
 import org.spekframework.spek2.Spek
-import javax.swing.text.html.HTML.Tag.H2
+import org.spekframework.spek2.style.specification.describe
 
 @Suppress("LocalVariableName")
 object MachineStackTest : Spek({
-    group("basic tests") {
+    describe("basic tests") {
         val a by memoized { Ingredient("A") }
         val b by memoized { Ingredient("B") }
         val c by memoized { Ingredient("C") }
@@ -21,7 +23,7 @@ object MachineStackTest : Spek({
             )
         }
 
-        test("has basic properties") {
+        it("has basic properties") {
             val sut = MachineStack(recipe)
 
             expect(sut.recipe).toBe(recipe)
@@ -29,7 +31,7 @@ object MachineStackTest : Spek({
             expect(sut.boundedRatio).toBe(1f)
         }
 
-        test("has correct streams with size of 1") {
+        it("has correct streams with size of 1") {
             val sut = MachineStack(recipe)
 
             val inputStream = sut.inputStream
@@ -43,7 +45,7 @@ object MachineStackTest : Spek({
             expect(outputStream[d]).notToBeNull().toBeWithErrorTolerance(400f, 1f)
         }
 
-        test("has correct streams with size of 2") {
+        it("has correct streams with size of 2") {
             val sut = MachineStack(recipe, 2)
 
             val inputStream = sut.inputStream
@@ -57,7 +59,7 @@ object MachineStackTest : Spek({
             expect(outputStream[d]).notToBeNull().toBeWithErrorTolerance(800f, 1f)
         }
 
-        test("can be bounded by ratio") {
+        it("can be bounded by ratio") {
             val sut = MachineStack(recipe, 3, 0.5f)
 
             val inputStream = sut.inputStream
