@@ -1,17 +1,19 @@
 package ru.ought.recipe_balancer.managers
 
 import com.charleskorn.kaml.Yaml
-import ru.ought.recipe_balancer.Ingredient
-import ru.ought.recipe_balancer.MachineStack
-import ru.ought.recipe_balancer.Recipe
-import ru.ought.recipe_balancer.Stack
+import ru.ought.recipe_balancer.*
 
 
 class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(),
-              internal val machines: MutableList<MachineStack> = mutableListOf()
+              internal val machines: MutableList<MachineStack> = mutableListOf(),
+              internal val dataLinks: MutableList<DataLink> = mutableListOf()
 ) {
+    private val graph: MachineGraph? = null
 
     fun serializeYAML(): String {
+        if (dataLinks.isEmpty() && graph != null) {
+            graph.forwardLinks.flatMapTo(dataLinks) { (_, v) -> v.map(::DataLink) }
+        }
         return Yaml.default.stringify(
             SerializableData.serializer(),
             SerializableData(this)
@@ -21,7 +23,7 @@ class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(
     companion object {
         fun desearilizeYAML(yaml: String): Manager {
             val data = Yaml.default.parse(SerializableData.serializer(), yaml)
-            return Manager(data.ingredients, data.getMachines())
+            return Manager(data.ingredients, data.getMachines(), data.dataLinks)
         }
     }
 
@@ -29,8 +31,8 @@ class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(
         ingredients += Ingredient(name)
     }
 
-    fun stackOf(name: String, amount: Int): Stack {
-        return Stack(getIngredient(name), amount)
+    fun stackOf(ingrName: String, amount: Int): Stack {
+        return Stack(getIngredient(ingrName), amount)
     }
 
     fun addMachine(
@@ -42,6 +44,11 @@ class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(
         size: Int = 1, boundedRatio: Float = 1f
     ) {
         machines += MachineStack(Recipe(inputs, outputs, energyPerTick, duration, machineName), size, boundedRatio)
+    }
+
+    fun addLink(from: MachineStack, to: MachineStack, ingrName: String) {
+        val ingr = getIngredient(ingrName)
+        dataLinks += DataLink(from.id, to.id, ingr)
     }
 
     private fun getIngredient(name: String): Ingredient {

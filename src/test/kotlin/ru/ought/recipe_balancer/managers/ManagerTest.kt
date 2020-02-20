@@ -28,6 +28,14 @@ object ManagerTest : Spek({
                     listOf(stackOf("Gravel", 1)),
                     16f, 0.5f, "Hammer"
                 )
+                addMachine(
+                    listOf(stackOf("Gravel", 1)),
+                    listOf(stackOf("Sand", 1)),
+                    16f, 0.5f, "Hammer"
+                )
+
+                addLink(machines[0], machines[1], "Cobblestone")
+                addLink(machines[1], machines[2], "Gravel")
             }
 
             val yaml = m.serializeYAML()
@@ -35,6 +43,7 @@ object ManagerTest : Spek({
             val m2 = Manager.desearilizeYAML(yaml)
             expect(m2.ingredients).toBe(m.ingredients)
             expect(m2.machines).toBe(m.machines)
+            expect(m2.dataLinks).toBe(m.dataLinks)
         }
     }
 })

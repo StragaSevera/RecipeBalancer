@@ -6,7 +6,7 @@ data class MachineStack(val id: Int, val recipe: Recipe, var size: Int = 1, var 
     constructor(recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f): this(idGenerator.getAndIncrement(), recipe, size, boundedRatio)
 
     companion object {
-        val idGenerator = AtomicInteger(1)
+        val idGenerator = AtomicInteger()
     }
 
     //TODO: Decide if should implement hashCode()
