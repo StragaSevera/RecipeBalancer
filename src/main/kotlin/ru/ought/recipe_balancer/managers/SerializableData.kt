@@ -11,7 +11,7 @@ import ru.ought.recipe_balancer.Stack
 class SerializableData(@Transient private val manager: Manager? = null) {
     val ingredients = manager?.ingredients ?: mutableListOf()
     private val machinesData = manager?.machines?.map(this::MachineStackData) ?: mutableListOf()
-    fun getMachines(): MutableList<MachineStack> = machinesData.map { it.toMachineStack() }.toMutableList()
+    fun getMachines(): MutableList<MachineStack> = machinesData.map { it.toMachineStack(this) }.toMutableList()
 
     private fun getIngredient(name: String): Ingredient {
         return ingredients.first { it.name == name }
@@ -21,8 +21,8 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     private inner class StackData(val ingredient: String, val amount: Int) {
         constructor(stack: Stack) : this(stack.ingredient.name, stack.amount)
 
-        fun toStack(): Stack {
-            return Stack(getIngredient(ingredient), amount)
+        fun toStack(data: SerializableData): Stack {
+            return Stack(data.getIngredient(ingredient), amount)
         }
     }
 
@@ -42,9 +42,9 @@ class SerializableData(@Transient private val manager: Manager? = null) {
             recipe.machineName
         )
 
-        fun toRecipe(): Recipe = Recipe(
-            inputs.map  {it.toStack()},
-            outputs.map {it.toStack()},
+        fun toRecipe(data: SerializableData): Recipe = Recipe(
+            inputs.map  {it.toStack(data)},
+            outputs.map {it.toStack(data)},
             energyPerTick,
             duration,
             machineName
@@ -55,6 +55,6 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     private inner class MachineStackData(val recipe: RecipeData, val size: Int = 1, val boundedRatio: Float = 1f) {
         constructor(machine: MachineStack) : this(RecipeData(machine.recipe), machine.size, machine.boundedRatio)
 
-        fun toMachineStack(): MachineStack = MachineStack(recipe.toRecipe(), size, boundedRatio)
+        fun toMachineStack(data: SerializableData): MachineStack = MachineStack(recipe.toRecipe(data), size, boundedRatio)
     }
 }
