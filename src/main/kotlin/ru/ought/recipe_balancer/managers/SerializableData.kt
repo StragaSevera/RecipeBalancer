@@ -18,7 +18,7 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     }
 
     @Serializable
-    private inner class StackData(val ingredient: String, val amount: Int) {
+    inner class StackData(val ingredient: String, private val amount: Int) {
         constructor(stack: Stack) : this(stack.ingredient.name, stack.amount)
 
         fun toStack(data: SerializableData): Stack {
@@ -27,12 +27,12 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     }
 
     @Serializable
-    private inner class RecipeData(
-        val inputs: List<StackData>,
-        val outputs: List<StackData>,
-        val energyPerTick: Float,
-        val duration: Float,
-        val machineName: String = "Common Machine"
+    inner class RecipeData(
+        private val inputs: List<StackData>,
+        private val outputs: List<StackData>,
+        private val energyPerTick: Float,
+        private val duration: Float,
+        private val machineName: String = "Common Machine"
     ) {
         constructor(recipe: Recipe) : this(
             recipe.inputs.map { StackData(it) },
@@ -52,9 +52,11 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     }
 
     @Serializable
-    private inner class MachineStackData(val recipe: RecipeData, val size: Int = 1, val boundedRatio: Float = 1f) {
-        constructor(machine: MachineStack) : this(RecipeData(machine.recipe), machine.size, machine.boundedRatio)
+    inner class MachineStackData(private val id: Int, private val recipe: RecipeData, private val size: Int = 1, private val boundedRatio: Float = 1f) {
+        constructor(machine: MachineStack) : this(machine.id, RecipeData(machine.recipe), machine.size, machine.boundedRatio)
 
-        fun toMachineStack(data: SerializableData): MachineStack = MachineStack(recipe.toRecipe(data), size, boundedRatio)
+        fun toMachineStack(data: SerializableData): MachineStack = MachineStack(id, recipe.toRecipe(data), size, boundedRatio)
     }
+
+    class DataLink(val from: MachineStackData, val to: MachineStackData, val ingr: Ingredient)
 }
