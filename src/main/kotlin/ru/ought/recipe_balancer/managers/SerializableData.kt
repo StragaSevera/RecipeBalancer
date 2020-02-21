@@ -52,10 +52,10 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     }
 
     @Serializable
-    private inner class MachineStackData(private val id: String, private val recipe: RecipeData, private val size: Int = 1, private val boundedRatio: Float = 1f) {
-        constructor(machine: MachineStack) : this(machine.id, RecipeData(machine.recipe), machine.size, machine.boundedRatio)
+    private inner class MachineStackData(private val id: String, private val recipe: RecipeData, private val size: Int = 1) {
+        constructor(machine: MachineStack) : this(machine.id, RecipeData(machine.recipe), machine.size)
 
-        fun toMachineStack(data: SerializableData): MachineStack = MachineStack(id, recipe.toRecipe(data), size, boundedRatio)
+        fun toMachineStack(data: SerializableData): MachineStack = MachineStack(id, recipe.toRecipe(data), size)
     }
 }
 

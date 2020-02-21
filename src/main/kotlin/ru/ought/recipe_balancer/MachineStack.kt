@@ -7,7 +7,7 @@ data class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, v
     constructor(recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f): this(nextId.getAndIncrement(), recipe, size, boundedRatio)
 
     companion object {
-        private const val ID_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        private const val ID_CHARS = "abcdefghijklmnopqrstuvwxyz"
         private fun getStringId(col: Int): String {
             if (col in ID_CHARS.indices) {
                 return ID_CHARS[col].toString()
@@ -29,13 +29,13 @@ data class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, v
     val outputStream get() = recipe.outputStream.transformStream()
 
     override fun toString(): String = buildString {
-        append("${recipe.machineName}#$size ${boundedPercent()} id: $id")
+        append("${recipe.machineName}#$id: $size, rate ${boundedPercent()}")
         append("\n  Input: ")
         for ((ingr, rate) in inputStream)
-            append("$ingr: $rate")
+            append("${ingr.name}: $rate")
         append("\n  Output: ")
         for ((ingr, rate) in outputStream)
-            append("$ingr: $rate")
+            append("${ingr.name}: $rate")
         append('\n')
     }
     private fun IngredientStream.transformStream(): IngredientStream = mapValues { it.value * this@MachineStack.size * boundedRatio }

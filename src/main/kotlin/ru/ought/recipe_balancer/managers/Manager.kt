@@ -2,6 +2,7 @@ package ru.ought.recipe_balancer.managers
 
 import com.charleskorn.kaml.Yaml
 import ru.ought.recipe_balancer.*
+import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
 
@@ -62,4 +63,21 @@ class Manager(
 
     private fun getMachine(id: String) = machines.first { it.id == id }
 
+}
+
+fun main(args: Array<String>) {
+    val yaml: String = if(args.isEmpty()) {
+        val file = File("recipe.yml")
+        if(file.exists())
+            file.readText()
+        else
+            String::class.java.getResource("/recipe.yml").readText()
+    } else {
+        File(args[0]).readText()
+    }
+
+    val manager = Manager.desearilizeYAML(yaml)
+    val graph = manager.buildGraph()
+    graph.balance()
+    println(graph)
 }

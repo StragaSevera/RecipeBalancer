@@ -1,0 +1,66 @@
+ingredients:
+  - name: "Cobblestone"
+  - name: "Gravel"
+  - name: "Sand"
+  - name: "Glass"
+machinesData:
+  - id: "a"
+    recipe:
+      inputs: []
+      outputs:
+        - ingredient: "Cobblestone"
+          amount: 1
+      energyPerTick: 32.0
+      duration: 0.8
+      machineName: "Rock Breaker"
+    size: 1
+  - id: "b"
+    recipe:
+      inputs:
+        - ingredient: "Cobblestone"
+          amount: 1
+      outputs:
+        - ingredient: "Gravel"
+          amount: 1
+      energyPerTick: 16.0
+      duration: 0.5
+      machineName: "Hammer"
+    size: 1
+  - id: "c"
+    recipe:
+      inputs:
+        - ingredient: "Gravel"
+          amount: 1
+      outputs:
+        - ingredient: "Sand"
+          amount: 1
+      energyPerTick: 16.0
+      duration: 0.5
+      machineName: "Hammer"
+    size: 1
+  - id: "d"
+    recipe:
+      inputs:
+        - ingredient: "Sand"
+          amount: 1
+      outputs:
+        - ingredient: "Glass"
+          amount: 1
+      energyPerTick: 4
+      duration: 1.6
+      machineName: "Microwave"
+    size: 1
+dataLinks:
+  - from: "a"
+    to: "b"
+    ingr:
+      name: "Cobblestone"
+  - from: "b"
+    to: "c"
+    ingr:
+      name: "Gravel"
+  - from: "c"
+    to: "d"
+    ingr:
+      name: "Sand"
+
