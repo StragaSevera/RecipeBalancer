@@ -44,6 +44,10 @@ class MachineGraph {
         } while (wasChanged)
     }
 
+    override fun toString(): String = buildString {
+        for (machine in _machines) append(machine.toString())
+    }
+
     private fun balanceForward(machine: MachineStack): Boolean {
         val stack = mutableListOf<MachineLink>()
         var wasChanged = false
@@ -85,7 +89,6 @@ class MachineGraph {
             }
         }
     }
-
     private fun <T> MutableList<T>.push(item: T) = this.add(item)
     private fun <T> MutableList<T>.pushAll(items: Iterable<T>) = this.addAll(items)
     private fun <T> MutableList<T>.pop(): T? = if (this.count() > 0) this.removeAt(this.count() - 1) else null

@@ -2,6 +2,7 @@ package ru.ought.recipe_balancer.managers
 
 import com.charleskorn.kaml.Yaml
 import ru.ought.recipe_balancer.*
+import java.util.concurrent.atomic.AtomicInteger
 
 
 class Manager(
@@ -9,6 +10,13 @@ class Manager(
     internal val machines: MutableList<MachineStack> = mutableListOf(),
     internal val dataLinks: MutableList<DataLink> = mutableListOf()
 ) {
+    private val machineId = AtomicInteger()
+    companion object {
+        fun desearilizeYAML(yaml: String): Manager {
+            val data = Yaml.default.parse(SerializableData.serializer(), yaml)
+            return Manager(data.ingredients, data.getMachines(), data.dataLinks)
+        }
+    }
 
     fun serializeYAML(): String {
         return Yaml.default.stringify(
@@ -22,13 +30,6 @@ class Manager(
         for (link in dataLinks)
             graph.link(getMachine(link.from), getMachine(link.to), link.ingr)
         return graph
-    }
-
-    companion object {
-        fun desearilizeYAML(yaml: String): Manager {
-            val data = Yaml.default.parse(SerializableData.serializer(), yaml)
-            return Manager(data.ingredients, data.getMachines(), data.dataLinks)
-        }
     }
 
     fun addIngredient(name: String) {
@@ -47,7 +48,7 @@ class Manager(
         machineName: String = "Common Machine",
         size: Int = 1, boundedRatio: Float = 1f
     ) {
-        machines += MachineStack(Recipe(inputs, outputs, energyPerTick, duration, machineName), size, boundedRatio)
+        machines += MachineStack(machineId.getAndIncrement(), Recipe(inputs, outputs, energyPerTick, duration, machineName), size, boundedRatio)
     }
 
     fun addLink(from: MachineStack, to: MachineStack, ingrName: String) {
@@ -59,6 +60,6 @@ class Manager(
         return ingredients.first { it.name == name }
     }
 
-    private fun getMachine(id: Int) = machines.first { it.id == id }
+    private fun getMachine(id: String) = machines.first { it.id == id }
 
 }

@@ -8,7 +8,7 @@ import ru.ought.recipe_balancer.*
 class SerializableData(@Transient private val manager: Manager? = null) {
     val ingredients = manager?.ingredients ?: mutableListOf()
 
-    private val machinesData = manager?.machines?.map(this::MachineStackData) ?: mutableListOf()
+    private val machinesData: List<MachineStackData> = manager?.machines?.map(this::MachineStackData) ?: mutableListOf()
     fun getMachines(): MutableList<MachineStack> = machinesData.map { it.toMachineStack(this) }.toMutableList()
 
     val dataLinks = manager?.dataLinks ?: mutableListOf()
@@ -52,7 +52,7 @@ class SerializableData(@Transient private val manager: Manager? = null) {
     }
 
     @Serializable
-    private inner class MachineStackData(private val id: Int, private val recipe: RecipeData, private val size: Int = 1, private val boundedRatio: Float = 1f) {
+    private inner class MachineStackData(private val id: String, private val recipe: RecipeData, private val size: Int = 1, private val boundedRatio: Float = 1f) {
         constructor(machine: MachineStack) : this(machine.id, RecipeData(machine.recipe), machine.size, machine.boundedRatio)
 
         fun toMachineStack(data: SerializableData): MachineStack = MachineStack(id, recipe.toRecipe(data), size, boundedRatio)
@@ -60,6 +60,6 @@ class SerializableData(@Transient private val manager: Manager? = null) {
 }
 
 @Serializable
-data class DataLink(val from: Int, val to: Int, val ingr: Ingredient) {
+data class DataLink(val from: String, val to: String, val ingr: Ingredient) {
     constructor(link: MachineLink): this(link.from.id, link.to.id, link.ingr)
 }
