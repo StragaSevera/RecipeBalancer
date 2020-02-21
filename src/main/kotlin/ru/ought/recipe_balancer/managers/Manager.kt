@@ -4,20 +4,24 @@ import com.charleskorn.kaml.Yaml
 import ru.ought.recipe_balancer.*
 
 
-class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(),
-              internal val machines: MutableList<MachineStack> = mutableListOf(),
-              internal val dataLinks: MutableList<DataLink> = mutableListOf()
+class Manager(
+    internal val ingredients: MutableList<Ingredient> = mutableListOf(),
+    internal val machines: MutableList<MachineStack> = mutableListOf(),
+    internal val dataLinks: MutableList<DataLink> = mutableListOf()
 ) {
-    private val graph: MachineGraph? = null
 
     fun serializeYAML(): String {
-        if (dataLinks.isEmpty() && graph != null) {
-            graph.forwardLinks.flatMapTo(dataLinks) { (_, v) -> v.map(::DataLink) }
-        }
         return Yaml.default.stringify(
             SerializableData.serializer(),
             SerializableData(this)
         )
+    }
+
+    fun buildGraph(): MachineGraph {
+        val graph = MachineGraph()
+        for (link in dataLinks)
+            graph.link(getMachine(link.from), getMachine(link.to), link.ingr)
+        return graph
     }
 
     companion object {
@@ -54,4 +58,7 @@ class Manager(internal val ingredients: MutableList<Ingredient> = mutableListOf(
     private fun getIngredient(name: String): Ingredient {
         return ingredients.first { it.name == name }
     }
+
+    private fun getMachine(id: Int) = machines.first { it.id == id }
+
 }

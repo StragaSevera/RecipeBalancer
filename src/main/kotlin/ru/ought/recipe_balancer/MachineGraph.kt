@@ -1,7 +1,5 @@
 package ru.ought.recipe_balancer
 
-import kotlinx.serialization.Serializable
-
 class MachineGraph {
     private val _forwardLinks: MutableMap<MachineStack, MutableList<MachineLink>> = mutableMapOf()
     val forwardLinks: Map<MachineStack, List<MachineLink>> get() = _forwardLinks

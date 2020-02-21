@@ -1,7 +1,5 @@
 package ru.ought.recipe_balancer
 
-import kotlinx.serialization.Serializable
-
 data class MachineLink(val from: MachineStack, val to: MachineStack, val ingr: Ingredient) {
     // TODO: Refactor two functions to use common functionality
     fun boundForward(): Boolean {
