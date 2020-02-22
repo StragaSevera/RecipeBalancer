@@ -44,7 +44,7 @@ machinesData:
           amount: 1
       duration: 1.6
       energyPerTick: 4
-    size: 1
+    size: 2
   - id: "e"
     recipe:
       machineName: "Hammer"

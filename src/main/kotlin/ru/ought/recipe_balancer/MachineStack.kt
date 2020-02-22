@@ -1,26 +1,20 @@
 package ru.ought.recipe_balancer
 
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
-enum class BoundingStatus {
-    OK, NOT_ENOUGH_INPUT, CANNOT_PUSH_OUTPUT
-}
+class MachineStack(
+    val id: String,
+    val recipe: Recipe,
+    var size: Int = 1,
+    var uuInput: Float = 0f,
+    var uuOutput: Float = 0f
+) {
+    constructor(id: Int, recipe: Recipe, size: Int = 1, uuInput: Float = 0f, uuOutput: Float = 0f) :
+            this(getStringId(id), recipe, size, uuInput, uuOutput)
 
-class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var boundedRatio: Float = 1f) {
-    var status = BoundingStatus.OK
-    constructor(id: Int, recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f) : this(
-        getStringId(id),
-        recipe,
-        size,
-        boundedRatio
-    )
-
-    constructor(recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f) : this(
-        nextId.getAndIncrement(),
-        recipe,
-        size,
-        boundedRatio
-    )
+    constructor(recipe: Recipe, size: Int = 1, uuInput: Float = 0f, uuOutput: Float = 0f) :
+            this(nextId.getAndIncrement(), recipe, size, uuInput, uuOutput)
 
     companion object {
         private const val ID_CHARS = "abcdefghijklmnopqrstuvwxyz"
@@ -40,9 +34,6 @@ class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var bo
         private val nextId = AtomicInteger()
     }
 
-    val inputStream get() = recipe.inputStream.transformStream()
-    val outputStream get() = recipe.outputStream.transformStream()
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -58,29 +49,33 @@ class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var bo
         return id.hashCode()
     }
 
+
+    val inputStream get() = recipe.inputStream.transformStream()
+    val outputStream get() = recipe.outputStream.transformStream()
+
     override fun toString(): String = buildString {
-        append("${recipe.machineName}#$id: $size, rate ${boundedPercent()}\n")
-        append("  Input:  ")
+        append("${id.toUpperCase()}: ${recipe.machineName}#$size, underusage ${boundedPercent(uuInput)} in ${boundedPercent(uuOutput)} out\n")
+        append("     Input:  ")
         var isFirstLine = true
         for ((ingr, rate) in inputStream) {
-            if(!isFirstLine) append("          ")
+            if (!isFirstLine) append("             ")
             append("${ingr.name}: ${"%.2f".format(rate)} ")
-            append("(max ${"%.2f".format(getRate(recipe.inputStream, ingr))})\n")
+            append("(max ${"%.2f".format(getIdealRate(recipe.inputStream, ingr))})\n")
             isFirstLine = false
         }
         if (inputStream.isEmpty()) append('\n')
         isFirstLine = true
-        append("  Output: ")
+        append("     Output: ")
         for ((ingr, rate) in outputStream) {
-            if(!isFirstLine) append("          ")
+            if (!isFirstLine) append("             ")
             append("${ingr.name}: ${"%.2f".format(rate)} ")
-            append("(max ${"%.2f".format(getRate(recipe.outputStream, ingr))})\n")
+            append("(max ${"%.2f".format(getIdealRate(recipe.outputStream, ingr))})\n")
             isFirstLine = false
         }
         if (outputStream.isEmpty()) append('\n')
     }
 
-    private fun getRate(
+    private fun getIdealRate(
         ingredientStream: IngredientStream,
         ingr: Ingredient
     ) =
@@ -88,9 +83,15 @@ class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var bo
 
 
     private fun IngredientStream.transformStream(): IngredientStream =
-        mapValues { it.value * this@MachineStack.size * boundedRatio }
+        mapValues { it.value * this@MachineStack.size * boundRatio() }
 
-    private fun boundedPercent(): String {
-        return "%.2f%%".format(boundedRatio * 100f)
+    private fun boundRatio(): Float {
+        check(uuInput in 0f..1f)
+        check(uuOutput in 0f..1f)
+        return (1f - uuInput) * (1f - uuOutput)
+    }
+
+    private fun boundedPercent(uu: Float): String {
+        return "%.2f%%".format(uu * 100f)
     }
 }

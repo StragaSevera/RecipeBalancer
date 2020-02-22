@@ -7,6 +7,7 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 
+@Suppress("LocalVariableName")
 object MachineLinkTest : Spek({
     describe("basic tests") {
         val a by memoized { Ingredient("A") }
@@ -16,7 +17,7 @@ object MachineLinkTest : Spek({
         val e by memoized { Ingredient("E") }
         val f by memoized { Ingredient("F") }
 
-        val recipeABC by memoized {
+        val recipeA_BC by memoized {
             Recipe(
                 listOf(Stack(a, 1)),
                 listOf(Stack(b, 3), Stack(c, 2)),
@@ -24,7 +25,7 @@ object MachineLinkTest : Spek({
             )
         }
 
-        val recipeCDEF by memoized {
+        val recipeCD_EF by memoized {
             Recipe(
                 listOf(Stack(c, 4), Stack(d, 1)),
                 listOf(Stack(e, 2), Stack(f, 3000)),
@@ -32,100 +33,100 @@ object MachineLinkTest : Spek({
             )
         }
 
-        it("can bound forward simple chain") {
-            val from = MachineStack(recipeABC, 1)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage input for simple chain") {
+            val from = MachineStack(recipeA_BC, 1)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundForward()
+            val result = sut.boundUUInput()
 
             expect(result).toBe(true)
-            expect(from.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
-        it("can bound forward simple chain when already bounded") {
-            val from = MachineStack(recipeABC, 1)
-            val to = MachineStack(recipeCDEF, 1, 0.6f)
+        it("can bound underusage input for simple chain when already bounded") {
+            val from = MachineStack(recipeA_BC, 1)
+            val to = MachineStack(recipeCD_EF, 1, 0.4f)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundForward()
+            val result = sut.boundUUInput()
 
             expect(result).toBe(true)
-            expect(from.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
-        it("can bound forward simple chain when no bounds") {
-            val from = MachineStack(recipeABC, 4)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage input for simple chain when no bounds") {
+            val from = MachineStack(recipeA_BC, 4)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundForward()
+            val result = sut.boundUUInput()
 
             expect(result).toBe(false)
-            expect(from.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0f, 0.01f)
         }
 
-        it("can bound forward simple chain when no bounds and already bounded") {
-            val from = MachineStack(recipeABC, 4)
-            val to = MachineStack(recipeCDEF, 1, 0.6f)
+        it("can bound underusage input for simple chain when no bounds and already bounded") {
+            val from = MachineStack(recipeA_BC, 4)
+            val to = MachineStack(recipeCD_EF, 1, 0.4f)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundForward()
+            val result = sut.boundUUInput()
 
             expect(result).toBe(false)
-            expect(from.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(0.6f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0.4f, 0.01f)
         }
 
-        it("can bound backward simple chain") {
-            val from = MachineStack(recipeABC, 4)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage output for simple chain") {
+            val from = MachineStack(recipeA_BC, 4)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundBackward()
+            val result = sut.boundUUOutput()
 
             expect(result).toBe(true)
-            expect(from.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0f, 0.01f)
         }
 
-        it("can bound backward simple chain when already bounded") {
-            val from = MachineStack(recipeABC, 4, 0.6f)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage output for simple chain when already bounded") {
+            val from = MachineStack(recipeA_BC, 4, 0f, 0.4f)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundBackward()
+            val result = sut.boundUUOutput()
 
             expect(result).toBe(true)
-            expect(from.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0f, 0.01f)
         }
 
-        it("can bound backward simple chain when no bounds") {
-            val from = MachineStack(recipeABC, 1)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage output for simple chain when no bounds") {
+            val from = MachineStack(recipeA_BC, 1)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundBackward()
+            val result = sut.boundUUOutput()
 
             expect(result).toBe(false)
-            expect(from.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0f, 0.01f)
         }
 
-        it("can bound backward simple chain when already bounded and no bounds") {
-            val from = MachineStack(recipeABC, 1, 0.6f)
-            val to = MachineStack(recipeCDEF, 1)
+        it("can bound underusage output for simple chain when already bounded and no bounds") {
+            val from = MachineStack(recipeA_BC, 1, 0f, 0.4f)
+            val to = MachineStack(recipeCD_EF, 1)
             val sut = MachineLink(from, to, c)
 
-            val result = sut.boundBackward()
+            val result = sut.boundUUOutput()
 
             expect(result).toBe(false)
-            expect(from.boundedRatio).toBeWithErrorTolerance(0.6f, 0.01f)
-            expect(to.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(from.uuOutput).toBeWithErrorTolerance(0.4f, 0.01f)
+            expect(to.uuInput).toBeWithErrorTolerance(0f, 0.01f)
         }
     }
 })

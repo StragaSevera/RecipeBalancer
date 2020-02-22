@@ -54,7 +54,7 @@ class MachineGraph {
         stack.pushAll(forwardLinks[machine]?.reversed() ?: error("No forwards links for a machine to balance"))
         var current: MachineLink? = stack.pop()
         while (current != null) {
-            wasChanged = wasChanged || current.boundForward()
+            wasChanged = wasChanged || current.boundUUInput()
             forwardLinks[current.to]?.let { stack.pushAll(it.reversed()) }
             current = stack.pop()
         }
@@ -67,7 +67,7 @@ class MachineGraph {
         stack.pushAll(backwardLinks[machine]?.reversed() ?: error("No backwards links for a machine to balance"))
         var current: MachineLink? = stack.pop()
         while (current != null) {
-            wasChanged = wasChanged || current.boundBackward()
+            wasChanged = wasChanged || current.boundUUOutput()
             backwardLinks[current.from]?.let { stack.pushAll(it.reversed()) }
             current = stack.pop()
         }
