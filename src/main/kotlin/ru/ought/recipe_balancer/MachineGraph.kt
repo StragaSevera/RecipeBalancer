@@ -51,7 +51,7 @@ class MachineGraph {
     private fun balanceForward(machine: MachineStack): Boolean {
         val stack = mutableListOf<MachineLink>()
         var wasChanged = false
-        stack.pushAll(forwardLinks[machine]?.reversed() ?: error("No links for a root machine"))
+        stack.pushAll(forwardLinks[machine]?.reversed() ?: error("No forwards links for a machine to balance"))
         var current: MachineLink? = stack.pop()
         while (current != null) {
             wasChanged = wasChanged || current.boundForward()
@@ -64,7 +64,7 @@ class MachineGraph {
     private fun balanceBackward(machine: MachineStack): Boolean {
         val stack = mutableListOf<MachineLink>()
         var wasChanged = false
-        stack.pushAll(backwardLinks[machine]?.reversed() ?: error("No links for a root machine"))
+        stack.pushAll(backwardLinks[machine]?.reversed() ?: error("No backwards links for a machine to balance"))
         var current: MachineLink? = stack.pop()
         while (current != null) {
             wasChanged = wasChanged || current.boundBackward()

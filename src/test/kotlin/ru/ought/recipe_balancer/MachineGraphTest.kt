@@ -17,7 +17,7 @@ object MachineGraphTest : Spek({
         val e by memoized { Ingredient("E") }
         val f by memoized { Ingredient("F") }
 
-        val recipeAB by memoized {
+        val recipeA_B by memoized {
             Recipe(
                 listOf(Stack(a, 1)),
                 listOf(Stack(b, 1)),
@@ -25,7 +25,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        val recipeBCD by memoized {
+        val recipeB_CD by memoized {
             Recipe(
                 listOf(Stack(b, 2)),
                 listOf(Stack(c, 1), Stack(d, 2)),
@@ -33,7 +33,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        val recipeDEF by memoized {
+        val recipeDE_F by memoized {
             Recipe(
                 listOf(Stack(d, 1), Stack(e, 3)),
                 listOf(Stack(f, 4)),
@@ -41,7 +41,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        val recipeAE by memoized {
+        val recipeA_E by memoized {
             Recipe(
                 listOf(Stack(a, 1)),
                 listOf(Stack(e, 2)),
@@ -49,7 +49,7 @@ object MachineGraphTest : Spek({
             )
         }
 
-        val recipeCA by memoized {
+        val recipeC_A by memoized {
             Recipe(
                 listOf(Stack(c, 1)),
                 listOf(Stack(a, 1)),
@@ -58,159 +58,208 @@ object MachineGraphTest : Spek({
         }
 
         it("can be linked") {
-            val machineAB = MachineStack(recipeAB)
-            val machineBCD = MachineStack(recipeBCD)
+            val machineA_B = MachineStack(recipeA_B)
+            val machineB_CD = MachineStack(recipeB_CD)
             val sut = MachineGraph()
 
-            sut.link(machineAB, machineBCD, b)
+            sut.link(machineA_B, machineB_CD, b)
 
             expect(sut.forwardLinks).toBe(
                 mapOf(
-                    machineAB to listOf(
-                        MachineLink(machineAB, machineBCD, b)
+                    machineA_B to listOf(
+                        MachineLink(machineA_B, machineB_CD, b)
                     )
                 )
             )
             expect(sut.backwardLinks).toBe(
                 mapOf(
-                    machineBCD to listOf(
-                        MachineLink(machineAB, machineBCD, b)
+                    machineB_CD to listOf(
+                        MachineLink(machineA_B, machineB_CD, b)
                     )
                 )
             )
         }
 
         it("can balance forward graph with two nodes") {
-            val machineAB = MachineStack(recipeAB)
-            val machineBCD = MachineStack(recipeBCD)
+            val machineA_B = MachineStack(recipeA_B)
+            val machineB_CD = MachineStack(recipeB_CD)
             val sut = MachineGraph()
-            sut.link(machineAB, machineBCD, b)
+            sut.link(machineA_B, machineB_CD, b)
 
             val result = sut.balanceForward()
 
             expect(result).toBe(true)
-            expect(machineAB.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(machineA_B.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
         }
 
         it("does not change when balancing forward and not needed") {
-            val machineAB = MachineStack(recipeAB, 3)
-            val machineBCD = MachineStack(recipeBCD)
+            val machineA_B = MachineStack(recipeA_B, 3)
+            val machineB_CD = MachineStack(recipeB_CD)
             val sut = MachineGraph()
-            sut.link(machineAB, machineBCD, b)
+            sut.link(machineA_B, machineB_CD, b)
 
             val result = sut.balanceForward()
 
             expect(result).toBe(false)
-            expect(machineAB.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineA_B.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
         it("can balance backward graph with two nodes") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineDEF = MachineStack(recipeDEF)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineDE_F = MachineStack(recipeDE_F)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineDEF, d)
+            sut.link(machineB_CD, machineDE_F, d)
 
             val result = sut.balanceBackward()
 
             expect(result).toBe(true)
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
         it("does not change when balancing backward and not needed") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineDEF = MachineStack(recipeDEF, 3)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineDE_F = MachineStack(recipeDE_F, 3)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineDEF, d)
+            sut.link(machineB_CD, machineDE_F, d)
 
             val result = sut.balanceBackward()
 
             expect(result).toBe(false)
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
         it("can balance forward V-graph with three nodes") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineAE = MachineStack(recipeAE)
-            val machineDEF = MachineStack(recipeDEF, 2)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineA_E = MachineStack(recipeA_E)
+            val machineDE_F = MachineStack(recipeDE_F, 2)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineDEF, d)
-            sut.link(machineAE, machineDEF, e)
+            sut.link(machineB_CD, machineDE_F, d)
+            sut.link(machineA_E, machineDE_F, e)
 
             sut.balanceForward()
 
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineAE.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineA_E.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
         }
 
         it("can balance backward ^-graph with three nodes") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineCA = MachineStack(recipeCA)
-            val machineDEF = MachineStack(recipeDEF)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineC_A = MachineStack(recipeC_A)
+            val machineDE_F = MachineStack(recipeDE_F)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineCA, c)
-            sut.link(machineBCD, machineDEF, d)
+            sut.link(machineB_CD, machineC_A, c)
+            sut.link(machineB_CD, machineDE_F, d)
 
             sut.balanceBackward()
 
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(machineCA.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(machineC_A.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
         it("can full balance V-graph with three nodes") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineAE = MachineStack(recipeAE)
-            val machineDEF = MachineStack(recipeDEF, 2)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineA_E = MachineStack(recipeA_E)
+            val machineDE_F = MachineStack(recipeDE_F, 2)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineDEF, d)
-            sut.link(machineAE, machineDEF, e)
+            sut.link(machineB_CD, machineDE_F, d)
+            sut.link(machineA_E, machineDE_F, e)
 
             sut.balance()
 
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
-            expect(machineAE.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
+            expect(machineA_E.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
         }
 
         it("can full balance ^-graph with three nodes") {
-            val machineBCD = MachineStack(recipeBCD)
-            val machineCA = MachineStack(recipeCA)
-            val machineDEF = MachineStack(recipeDEF)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineC_A = MachineStack(recipeC_A)
+            val machineDE_F = MachineStack(recipeDE_F)
             val sut = MachineGraph()
-            sut.link(machineBCD, machineCA, c)
-            sut.link(machineBCD, machineDEF, d)
+            sut.link(machineB_CD, machineC_A, c)
+            sut.link(machineB_CD, machineDE_F, d)
 
             sut.balance()
 
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(machineCA.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(machineC_A.boundedRatio).toBeWithErrorTolerance(0.5f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
         }
 
         it("can full balance complex graph") {
-            val machineAB = MachineStack(recipeAB)
-            val machineBCD = MachineStack(recipeBCD)
-            val machineCA = MachineStack(recipeCA)
-            val machineAE = MachineStack(recipeAE)
-            val machineDEF = MachineStack(recipeDEF)
+            val machineA_B = MachineStack(recipeA_B)
+            val machineB_CD = MachineStack(recipeB_CD)
+            val machineC_A = MachineStack(recipeC_A)
+            val machineA_E = MachineStack(recipeA_E)
+            val machineDE_F = MachineStack(recipeDE_F)
             val sut = MachineGraph()
-            sut.link(machineAB, machineBCD, b)
-            sut.link(machineBCD, machineCA, c)
-            sut.link(machineAE, machineDEF, e)
-            sut.link(machineBCD, machineDEF, d)
+            sut.link(machineA_B, machineB_CD, b)
+            sut.link(machineB_CD, machineC_A, c)
+            sut.link(machineA_E, machineDE_F, e)
+            sut.link(machineB_CD, machineDE_F, d)
 
             sut.balance()
 
-            expect(machineAB.boundedRatio).toBeWithErrorTolerance(0.66f, 0.01f)
-            expect(machineBCD.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
-            expect(machineCA.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
-            expect(machineAE.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
-            expect(machineDEF.boundedRatio).toBeWithErrorTolerance(0.66f, 0.01f)
+            expect(machineA_B.boundedRatio).toBeWithErrorTolerance(0.66f, 0.01f)
+            expect(machineB_CD.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
+            expect(machineC_A.boundedRatio).toBeWithErrorTolerance(0.33f, 0.01f)
+            expect(machineA_E.boundedRatio).toBeWithErrorTolerance(1f, 0.01f)
+            expect(machineDE_F.boundedRatio).toBeWithErrorTolerance(0.66f, 0.01f)
+        }
+    }
+    describe("real tests") {
+        it("balances O2 line") {
+            val Cobblestone = Ingredient("Cobblestone")
+            val Gravel = Ingredient("Gravel")
+            val Sand = Ingredient("Sand")
+            val Glass = Ingredient("Glass")
+
+            val rockBreaker = MachineStack(
+                Recipe(
+                    listOf(),
+                    listOf(Stack(Cobblestone, 1)),
+                    32f, 0.8f, "Rock Breaker"
+                ), 1
+            )
+            val hammer1 = MachineStack(
+                Recipe(
+                    listOf(Stack(Cobblestone, 1)),
+                    listOf(Stack(Gravel, 1)),
+                    16f, 0.5f, "Hammer"
+                ), 1
+            )
+            val hammer2 = MachineStack(
+                Recipe(
+                    listOf(Stack(Gravel, 1)),
+                    listOf(Stack(Sand, 1)),
+                    16f, 0.5f, "Hammer"
+                ), 1
+            )
+            val microwave = MachineStack(
+                Recipe(
+                    listOf(Stack(Sand, 1)),
+                    listOf(Stack(Glass, 1)),
+                    4f, 1.6f, "Microwave"
+                ), 1
+            )
+
+            val graph = MachineGraph()
+            graph.link(rockBreaker, hammer1, Cobblestone)
+            graph.link(hammer1, hammer2, Gravel)
+            graph.link(hammer2, microwave, Sand)
+
+            graph.balance()
+
+            expect(rockBreaker.outputStream.getValue(Cobblestone)).toBeWithErrorTolerance(0.63f, 0.01f)
+            expect(hammer1.outputStream.getValue(Gravel)).toBeWithErrorTolerance(0.63f, 0.01f)
+            expect(hammer2.outputStream.getValue(Sand)).toBeWithErrorTolerance(0.63f, 0.01f)
+            expect(microwave.outputStream.getValue(Glass)).toBeWithErrorTolerance(0.63f, 0.01f)
         }
     }
 })
