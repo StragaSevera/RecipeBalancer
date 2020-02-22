@@ -13,7 +13,6 @@ object ManagerTest : Spek({
             addIngredient("Cobblestone")
             addIngredient("Gravel")
             addIngredient("Sand")
-            addIngredient("Glass")
 
             addMachine(
                 listOf(),
@@ -46,7 +45,6 @@ object ManagerTest : Spek({
 
         it("has basic serializing") {
             val yaml = manager.serializeYAML()
-            print(yaml)
             val m2 = Manager.desearilizeYAML(yaml)
             expect(m2.ingredients).toBe(manager.ingredients)
             expect(m2.machines).toBe(manager.machines)

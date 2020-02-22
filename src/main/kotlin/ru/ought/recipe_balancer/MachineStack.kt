@@ -3,8 +3,19 @@ package ru.ought.recipe_balancer
 import java.util.concurrent.atomic.AtomicInteger
 
 class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var boundedRatio: Float = 1f) {
-    constructor(id: Int, recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f): this(getStringId(id), recipe, size, boundedRatio)
-    constructor(recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f): this(nextId.getAndIncrement(), recipe, size, boundedRatio)
+    constructor(id: Int, recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f) : this(
+        getStringId(id),
+        recipe,
+        size,
+        boundedRatio
+    )
+
+    constructor(recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f) : this(
+        nextId.getAndIncrement(),
+        recipe,
+        size,
+        boundedRatio
+    )
 
     companion object {
         private const val ID_CHARS = "abcdefghijklmnopqrstuvwxyz"
@@ -43,18 +54,36 @@ class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var bo
     }
 
     override fun toString(): String = buildString {
-        append("${recipe.machineName}#$id: $size, rate ${boundedPercent()}")
-        append("\n  Input: ")
-        for ((ingr, rate) in inputStream)
-            append("${ingr.name}: $rate")
-        append("\n  Output: ")
-        for ((ingr, rate) in outputStream)
-            append("${ingr.name}: $rate")
-        append('\n')
+        append("${recipe.machineName}#$id: $size, rate ${boundedPercent()}\n")
+        append("  Input:  ")
+        var isFirstLine = true
+        for ((ingr, rate) in inputStream) {
+            if(!isFirstLine) append("          ")
+            append("${ingr.name}: ${"%.2f".format(rate)} ")
+            append("(max ${"%.2f".format(getRate(recipe.inputStream, ingr))})\n")
+            isFirstLine = false
+        }
+        if (inputStream.isEmpty()) append('\n')
+        isFirstLine = true
+        append("  Output: ")
+        for ((ingr, rate) in outputStream) {
+            if(!isFirstLine) append("          ")
+            append("${ingr.name}: ${"%.2f".format(rate)} ")
+            append("(max ${"%.2f".format(getRate(recipe.outputStream, ingr))})\n")
+            isFirstLine = false
+        }
+        if (outputStream.isEmpty()) append('\n')
     }
 
+    private fun getRate(
+        ingredientStream: IngredientStream,
+        ingr: Ingredient
+    ) =
+        ingredientStream.getValue(ingr) * size
 
-    private fun IngredientStream.transformStream(): IngredientStream = mapValues { it.value * this@MachineStack.size * boundedRatio }
+
+    private fun IngredientStream.transformStream(): IngredientStream =
+        mapValues { it.value * this@MachineStack.size * boundedRatio }
 
     private fun boundedPercent(): String {
         return "%.2f%%".format(boundedRatio * 100f)
