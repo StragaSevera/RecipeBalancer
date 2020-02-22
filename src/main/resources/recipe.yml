@@ -1,50 +1,88 @@
 machinesData:
   - id: "a"
     recipe:
+      machineName: "Rock Breaker"
       inputs: []
       outputs:
         - ingredient: "Cobblestone"
           amount: 1
-      energyPerTick: 32.0
       duration: 0.8
-      machineName: "Rock Breaker"
+      energyPerTick: 32.0
     size: 1
   - id: "b"
     recipe:
+      machineName: "Hammer"
       inputs:
         - ingredient: "Cobblestone"
           amount: 1
       outputs:
         - ingredient: "Gravel"
           amount: 1
-      energyPerTick: 16.0
       duration: 0.5
-      machineName: "Hammer"
+      energyPerTick: 16.0
     size: 1
   - id: "c"
     recipe:
+      machineName: "Hammer"
       inputs:
         - ingredient: "Gravel"
           amount: 1
       outputs:
         - ingredient: "Sand"
           amount: 1
-      energyPerTick: 16.0
       duration: 0.5
-      machineName: "Hammer"
+      energyPerTick: 16.0
     size: 1
   - id: "d"
     recipe:
+      machineName: "Microwave"
       inputs:
         - ingredient: "Sand"
           amount: 1
       outputs:
         - ingredient: "Glass"
           amount: 1
-      energyPerTick: 4
       duration: 1.6
-      machineName: "Microwave"
+      energyPerTick: 4
     size: 1
+  - id: "e"
+    recipe:
+      machineName: "Hammer"
+      inputs:
+        - ingredient: "Glass"
+          amount: 1
+      outputs:
+        - ingredient: "Glass Dust"
+          amount: 1
+      duration: 0.5
+      energyPerTick: 16.0
+    size: 1
+  - id: "f"
+    recipe:
+      machineName: "Centrifuge"
+      inputs:
+        - ingredient: "Glass Dust"
+          amount: 1
+      outputs:
+        - ingredient: "SiO2"
+          amount: 1
+      duration: 4
+      energyPerTick: 5
+    size: 5
+  - id: "g"
+    recipe:
+      machineName: "Electrolyzer"
+      inputs:
+        - ingredient: "SiO2"
+          amount: 3
+      outputs:
+        - ingredient: "Si"
+          amount: 1
+        - ingredient: "O2"
+          amount: 2000
+      duration: 3
+      energyPerTick: 30
+    size: 1    
 dataLinks:
   - from: "a"
     to: "b"
@@ -58,3 +96,15 @@ dataLinks:
     to: "d"
     ingr:
       name: "Sand"
+  - from: "d"
+    to: "e"
+    ingr:
+      name: "Glass"
+  - from: "e"
+    to: "f"
+    ingr:
+      name: "Glass Dust"
+  - from: "f"
+    to: "g"
+    ingr:
+      name: "SiO2"

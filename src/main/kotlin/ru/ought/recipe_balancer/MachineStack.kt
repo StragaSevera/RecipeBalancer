@@ -2,7 +2,12 @@ package ru.ought.recipe_balancer
 
 import java.util.concurrent.atomic.AtomicInteger
 
+enum class BoundingStatus {
+    OK, NOT_ENOUGH_INPUT, CANNOT_PUSH_OUTPUT
+}
+
 class MachineStack(val id: String, val recipe: Recipe, var size: Int = 1, var boundedRatio: Float = 1f) {
+    var status = BoundingStatus.OK
     constructor(id: Int, recipe: Recipe, size: Int = 1, boundedRatio: Float = 1f) : this(
         getStringId(id),
         recipe,
